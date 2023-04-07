@@ -2,6 +2,7 @@
 import { Head, usePage, Link } from '@inertiajs/vue3';
 import MainNavLayout from '@/Layouts/MainNavLayout.vue';
 import CreatePostBox from '@/Components/CreatePostBox.vue';
+import Post from '@/Components/Post.vue';
 
 import Magnify from 'vue-material-design-icons/Magnify.vue';
 import TelevisionPlay from 'vue-material-design-icons/TelevisionPlay.vue';
@@ -69,6 +70,8 @@ const user = usePage().props.auth.user
                     image="https://picsum.photos/id/140/200/220"
                     placeholder="What's on your mind Urii Rybachok"
                 />
+
+                <Post />
             </div>
 
             <div id="RightSection" class="pl-4 md:block hidden">
