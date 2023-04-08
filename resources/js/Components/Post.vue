@@ -46,7 +46,11 @@ const form = reactive({ comment: null })
         <div class="px-5 pb-2 text-[17px] font-semibold">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry.
         </div>
-        <img class="mx-auto cursor-pointer" src="https://picsum.photos/id/189/800/800">
+        <img
+            @click="isImageDisplay = 'https://picsum.photos/id/189/800/800'"
+            class="mx-auto cursor-pointer"
+            src="https://picsum.photos/id/189/800/800"
+        >
         <div id="Likes" class="px-5">
             <div class="flex items-center justify-between py-3 border-b">
                 <ThumbUp fillColor="#1D72E2" :size="16" />
