@@ -38,7 +38,9 @@ const crop = () => {
     data.append('left', coordinates.left || '')
     data.append('top', coordinates.top || '')
 
-    //SEND TO BACKEND
+    router.post('/user/update-image', data, {
+        preserveState: false,
+    })
 
     emit('showModal', false)
 }

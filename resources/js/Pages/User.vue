@@ -12,7 +12,7 @@ import { storeToRefs } from 'pinia';
 const useGeneral = useGeneralStore()
 const { isCropperModal, isImageDisplay } = storeToRefs(useGeneral)
 
-// defineProps({ posts: Object, user: Object })
+defineProps({ posts: Object, user: Object })
 </script>
 
 <template>
@@ -29,9 +29,10 @@ const { isCropperModal, isImageDisplay } = storeToRefs(useGeneral)
                             <div class="relative">
                                 <img
                                     class="rounded-full w-[165px] h-[165px] border-white border-4"
-                                    src="https://picsum.photos/id/200/500/500"
+                                    :src="user.image"
                                 >
                                 <button
+                                    v-if="$page.props.auth.user.id === user.id"
                                     @click="isCropperModal = true"
                                     class="absolute right-0 top-[100px] bg-gray-200 hover:bg-gray-300 p-1.5 rounded-full cursor-pointer"
                                 >
@@ -40,7 +41,7 @@ const { isCropperModal, isImageDisplay } = storeToRefs(useGeneral)
                             </div>
                             <div class="md:mt-4 text-center md:text-left -mt-3">
                                 <div class="text-[28px] font-extrabold pt-1">
-                                    Urii Rybachok
+                                    {{ user.name }}
                                 </div>
                                 <div class="text-[17px] font-bold text-gray-600 mb-1.5 text-center md:text-left">234 friends</div>
                                 <div class="flex md:justify-start justify-center md:-ml-1">
@@ -77,7 +78,8 @@ const { isCropperModal, isImageDisplay } = storeToRefs(useGeneral)
                         </div>
 
                         <Link
-                            href="/"
+                            v-if="$page.props.auth.user.id === user.id"
+                            :href="route('profile.edit')"
                             class="
                                 flex
                                 justify-center
@@ -167,11 +169,17 @@ const { isCropperModal, isImageDisplay } = storeToRefs(useGeneral)
                     <div class="bg-white p-3 mt-4 rounded-lg shadow-lg">
                         <div class="font-extrabold pb-2 text-xl">Photos</div>
                         <div class="flex flex-wrap items-center justify-start w-full">
-                            <span class="w-1/3">
+                            <span
+                                v-for="photo in posts.data"
+                                :key="photo"
+                                class="w-1/3"
+                                v-show="photo.image !== null"
+                            >
                                 <img
-                                    @click="isImageDisplay = 'https://picsum.photos/id/78/800/800'"
-                                    class="aspect-square object-cover p-1 rounded-lg cursor-pointer"
-                                    src="https://picsum.photos/id/78/300/300"
+                                    v-if="photo.image"
+                                    @click="isImageDisplay = photo.image"
+                                    class="w-1/3 aspect-square object-cover p-1 rounded-lg cursor-pointer"
+                                    :src="photo.image"
                                 >
                             </span>
                         </div>
@@ -180,11 +188,13 @@ const { isCropperModal, isImageDisplay } = storeToRefs(useGeneral)
 
                 <div id="PostsSection" class="w-full md:w-7/12 overflow-auto">
                     <CreatePostBox
-                        image="https://picsum.photos/id/140/200/220"
-                        placeholder="What's on your mind Urii Rybachok"
+                        v-if="$page.props.auth.user.id === user.id"
+                        :image="user.image"
+                        :placeholder="'What\'s on your mind' + user.name "
                     />
-
-                    <Post />
+                    <div v-for="post in posts.data" :key="post">
+                        <Post :user="post.user" :post="post" :comments="post.comments" />
+                    </div>
                 </div>
             </div>
         </div>

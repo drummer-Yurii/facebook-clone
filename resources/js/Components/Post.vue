@@ -14,26 +14,52 @@ const { isPostOverlay } = storeToRefs(useGeneral)
 
 const form = reactive({ comment: null })
 
-// const props = defineProps({
-//     user: Object,
-//     post: Object,
-//     comments: Object,
-// });
+const props = defineProps({
+    user: Object,
+    post: Object,
+    comments: Object,
+});
 
-// const { post, user, comments } = toRefs(props)
+const { post, user, comments } = toRefs(props)
+
+const createComment = () => {
+    router.post('/comment', {
+        post_id: post.value.id,
+        text: form.comment
+    },
+    {
+        preserveScroll: true,
+    })
+}
+
+const deleteComment = (id) => {
+    router.delete('/comment/' + id, {
+        preserveScroll: true
+    })
+}
+
+const deletePost = (id) => {
+    router.delete('/post/' + id, {
+        preserveScroll: true
+    })
+}
+
+const isUser = () => {
+    router.get('/user/' + user.value.id)
+}
 </script>
 
 <template>
     <div id="Post" class="w-full bg-white rounded-lg my-4 shadow-md">
         <div class="flex items-center py-3 px-3">
-            <button class="mr-2">
-                <img class="rounded-full ml-1 min-w-[42px] max-h-[42px]" src="https://picsum.photos/id/87/42/42">
+            <button @click="isUser" class="mr-2">
+                <img class="rounded-full ml-1 min-w-[42px] max-h-[42px]" :src="user.image">
             </button>
             <div class="flex items-center justify-between p-2 rounded-full w-full">
                 <div>
-                    <div class="font-extrabold text-[15px]">Urii Rybachok</div>
+                    <div class="font-extrabold text-[15px]">{{ user.name }}</div>
                     <div class="flex items-center text-xs text-gray-600">
-                        14h <AccountMultiple class="ml-1" :size="15" fillColor="#64676B" />
+                        {{ post.created_at }} <AccountMultiple class="ml-1" :size="15" fillColor="#64676B" />
                     </div>
                 </div>
                 <div class="flex items-center">
@@ -44,25 +70,25 @@ const form = reactive({ comment: null })
             </div>
         </div>
         <div class="px-5 pb-2 text-[17px] font-semibold">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+            {{ post.text }}
         </div>
         <img
-            @click="isImageDisplay = 'https://picsum.photos/id/189/800/800'"
+            @click="isImageDisplay = post.image"
             class="mx-auto cursor-pointer"
-            src="https://picsum.photos/id/189/800/800"
+            :src="post.image"
         >
         <div id="Likes" class="px-5">
             <div class="flex items-center justify-between py-3 border-b">
                 <ThumbUp fillColor="#1D72E2" :size="16" />
-                <div class="text-sm text-gray-600 font-semibold">5 comments</div>
+                <div class="text-sm text-gray-600 font-semibold">{{ comments.length }} comments</div>
             </div>
         </div>
 
         <div id="Comments" class="px-3">
             <div id="CreateComment" class="flex items-center justify-between py-2">
                 <div class="flex items-center w-full">
-                    <Link href="/" class="mr-2">
-                        <img class="rounded-full ml-1 min-w-[36px] max-h-[36px]" src="https://picsum.photos/id/189/800/800">
+                    <Link :href="route('user.show', { id: $page.props.auth.user.id })" class="mr-2">
+                        <img class="rounded-full ml-1 min-w-[36px] max-h-[36px]" :src="$page.props.auth.user.image">
                     </Link>
                     <div class="flex items-center justify-center bg-[#EFF2F5] p-2 rounded-full w-full">
                         <input
@@ -82,6 +108,7 @@ const form = reactive({ comment: null })
                         >
                         <button
                             type="button"
+                            @click="createComment"
                             class="flex items-center text-sm pl-2 pr-3.5 rounded-full bg-blue-500 hover:bg-blue-600 text-white font-bold"
                         >
                             <Check fillColor="#FFFFFF" :size="20" /> Send
@@ -90,17 +117,24 @@ const form = reactive({ comment: null })
                 </div>
             </div>
 
-            <div id="Comments" class="max-h-[120px] overflow-auto pb-2 px-4">
-                <div class="flex items-center justify-between pb-2">
+            <div v-if="comments" id="Comments" class="max-h-[120px] overflow-auto pb-2 px-4">
+                <div
+                    class="flex items-center justify-between pb-2"
+                    v-for="comment in comments" :key="comment"
+                >
                     <div class="flex items-center w-full mb-1">
-                        <Link href="/" class="mr-2">
-                            <img class="rounded-full ml-1 min-w-[36px] max-h-[36px]" src="https://picsum.photos/id/189/800/800">
+                        <Link :href="route('posts.index')" class="mr-2">
+                            <img class="rounded-full ml-1 min-w-[36px] max-h-[36px]" :src="comment.user.image">
                         </Link>
                         <div class="flex items-center w-full">
                             <div class="flex items-center bg-[#EFF2F5] text-xs p-2 rounded-lg w-full">
-                                This is a comment
+                                {{ comment.text }}
                             </div>
-                            <button class="rounded-full p-1.5 ml-2 cursor-pointer hover:bg-[#F2F2F2]">
+                            <button
+                                v-if="$page.props.auth.user.id === comment.user.id"
+                                @click="deleteComment(comment.id)"
+                                class="rounded-full p-1.5 ml-2 cursor-pointer hover:bg-[#F2F2F2]"
+                            >
                                 <Delete fillColor="#64676B" />
                             </button>
                         </div>

@@ -22,8 +22,12 @@ return new class extends Migration
                 ->on('posts')
                 ->onDelete('cascade');
 
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
             $table->text('text');
-            
             $table->timestamps();
         });
     }
