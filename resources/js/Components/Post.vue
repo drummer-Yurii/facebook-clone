@@ -63,7 +63,7 @@ const isUser = () => {
                     </div>
                 </div>
                 <div class="flex items-center">
-                    <button class="rounded-full p-1.5 cursor-pointer hover:bg-[#F2F2F2]">
+                    <button @click="deletePost(post.id)" class="rounded-full p-1.5 cursor-pointer hover:bg-[#F2F2F2]">
                         <Delete fillColor="#64676B" />
                     </button>
                 </div>

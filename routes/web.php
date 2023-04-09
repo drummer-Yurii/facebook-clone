@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,16 +19,16 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/user', function () {
-    return Inertia::render('User');
-});
+// Route::get('/user', function () {
+//     return Inertia::render('User');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('posts.index');
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 
-    Route::post('/comment}', [CommentController::class, 'store'])->name('comment.store');
+    Route::post('/comment', [CommentController::class, 'store'])->name('comment.store');
     Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
 
     Route::get('/user/{id}}', [UserController::class, 'show'])->name('user.show');
