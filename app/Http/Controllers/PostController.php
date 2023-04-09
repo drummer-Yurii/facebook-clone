@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AllPostsCollection;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -24,7 +25,17 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([ 'text' => 'required' ]);
+        $post = new Post;
+
+        if ($request->hasFile('image')) {
+            $request->validate([ 'image' => 'required|mimes:jpg,jpeg,png' ]);
+            $post = (new ImageService)->updateImage($post, $request);
+        }
+
+        $post->user_id = auth()->user()->id;
+        $post->text = $request->input('text');
+        $post->save();
     }
 
     /**
