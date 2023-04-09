@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AllPostsCollection;
 use App\Models\Post;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
