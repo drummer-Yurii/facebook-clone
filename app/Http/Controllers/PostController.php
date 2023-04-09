@@ -42,8 +42,17 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(int $id)
     {
-        //
+        $post = Post::find($id);
+
+        if (!empty($post->image)) {
+            $currentImage = public_path() . $post->image;
+
+            if (file_exists($currentImage)) {
+                unlink($currentImage);
+            }
+        }
+        $post->delete();
     }
 }
